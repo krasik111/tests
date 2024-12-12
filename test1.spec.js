@@ -7,18 +7,23 @@ test('test1', async ({ page }) => {  test.setTimeout(15_000)
   // проверки что мы на стартовой странице
   await expect(page).toHaveTitle('OK-Notes - Магазин блокнотов');
   await expect(page).toHaveURL('https://enotes.pointschool.ru/');
-  await page.getByRole('link', { name: 'Главная' }).click();
+  await page.getByRole('link', { name: 'Главная' }).click();  
   await page.getByRole('link', { name: 'Регистрация' }).click();
   await page.getByRole('link', { name: 'Вход' }).click();
+  //await page.locator ('//*[@id="navbarNav"]/ul/li[3]/a').click();
 
   //Форма авторизации и ее проверки
   await expect(page.getByPlaceholder('Логин клиента')).toBeVisible();
-  await expect(page.getByPlaceholder('Пароль клиента')).toBeVisible();  
+  //await expect(page.locator('//*[@id="loginform-username"]')).toBeVisible();
+  await expect(page.getByPlaceholder('Пароль клиента')).toBeVisible();
+  //await expect(page.locator('//*[@name="LoginForm[password]"]')).toBeVisible();  
 
   // Указываем логин пароль + вход
   await page.getByPlaceholder('Логин клиента').click();
+  //await page.locator('//*[@id="loginform-username"]').click();
   await page.keyboard.type('test'); 
   await page.getByPlaceholder('Пароль клиента').click();
+  //await page.locator('//*[@name="LoginForm[password]"]').click();
   await page.keyboard.press('t');
   await page.keyboard.press('e');
   await page.keyboard.press('s');
@@ -29,14 +34,25 @@ test('test1', async ({ page }) => {  test.setTimeout(15_000)
   await expect(page.getByPlaceholder('Пароль клиента')).toHaveValue('test')  
   await expect (page.getByRole('button', { name: 'Вход' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Вход' })).toBeEnabled();
+  //await page.locator('//*[@name="login-button"]').click();
   await page.getByRole('button', { name: 'Вход' }).click({ timeout: 2_000 });
 
 
-  // Зашли в ЛК 
+  // Зашли в ЛК  
   await expect(page).toHaveURL('https://enotes.pointschool.ru/');
+  await expect(page.locator('//*[@id="dropdownBasket"]')).toBeVisible();
   await expect(page.getByText('Корзина', { exact: true })).toBeVisible();
 
-  //Добавление товара
+  //Очистка корзины
+  await expect(page.locator('.actionBuyProduct').first()).toBeVisible();
+  await page.locator('.actionBuyProduct').first().click();
+  //
+  await page.getByText('Корзина', { exact: true }).click();
+  //await page.locator('//*[@id="dropdownBasket"]').click();
+  await expect(page.getByLabel('Корзина')).toContainText('Очистить корзину');
+  await page.getByRole('button', { name: 'Очистить корзину' }).click();
+
+  //Добавление товара (По факту начало теста)
   await expect(page.locator('.actionBuyProduct').first()).toBeVisible();
   await page.locator('.actionBuyProduct').first().click();
 
